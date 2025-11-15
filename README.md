@@ -84,7 +84,7 @@ With the app reachable locally or via a tunnel, open it in the browser and try a
 
 1. **Fact Recording** - prompt: `My name is Kaz`
 2. **Weather Info** - prompt: `What's the weather in San Francisco today?`
-3. **Theme Switcher** - prompt: `Change the theme to dark mode` 
+3. **Theme Switcher** - prompt: `Change the theme to dark mode`
 
 ## What's next
 
@@ -95,3 +95,5 @@ Under the [`examples`](examples) directory, you'll find three more sample apps t
 3. [**Marketing Assets**](examples/marketing-assets): marketing creative workflow.
 
 Each example under [`examples/`](examples) includes the helper scripts (`npm start`, `npm run frontend`, `npm run backend`) pre-configured with its dedicated ports, so you can `cd` into an example and run `npm start` to boot its backend and frontend together. Please note that when you run `npm start`, `uv` must already be installed and all required environment variables should be exported.
+
+Test
