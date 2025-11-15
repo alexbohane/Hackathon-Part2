@@ -3,9 +3,13 @@
 from __future__ import annotations
 
 import logging
+import os
 from datetime import datetime
 from typing import Annotated, Any, AsyncIterator, Final, Literal
 from uuid import uuid4
+
+from elevenlabs.client import ElevenLabs
+from elevenlabs.play import play
 
 from agents import Agent, RunContextWrapper, Runner, StopAtTools, function_tool
 from chatkit.agents import (
@@ -74,6 +78,23 @@ async def save_fact(
     ctx: RunContextWrapper[FactAgentContext],
     fact: str,
 ) -> dict[str, str] | None:
+    # Play ElevenLabs TTS announcement
+    try:
+        elevenlabs_api_key = os.environ.get("ELEVENLABS_API_KEY")
+        if elevenlabs_api_key:
+            elevenlabs = ElevenLabs(api_key=elevenlabs_api_key)
+            audio = elevenlabs.text_to_speech.convert(
+                text="I am going to add this fact to my database",
+                voice_id="JBFqnCBsd6RMkjVDRZzb",
+                model_id="eleven_multilingual_v2",
+                output_format="mp3_44100_128",
+            )
+            play(audio)
+        else:
+            logging.warning("ELEVENLABS_API_KEY not found, skipping TTS")
+    except Exception as tts_exc:
+        logging.warning(f"Failed to play TTS: {str(tts_exc)}")
+
     try:
         saved = await fact_store.create(text=fact)
         confirmed = await fact_store.mark_saved(saved.id)

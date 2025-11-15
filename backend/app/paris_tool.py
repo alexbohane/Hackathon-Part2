@@ -43,7 +43,7 @@ async def paris_fact(
         if elevenlabs_api_key:
             elevenlabs = ElevenLabs(api_key=elevenlabs_api_key)
             audio = elevenlabs.text_to_speech.convert(
-                text="Ok, i am checking my paris facts knowledge",
+                text="Ok, I will check my paris facts knowledge",
                 voice_id="JBFqnCBsd6RMkjVDRZzb",
                 model_id="eleven_multilingual_v2",
                 output_format="mp3_44100_128",
