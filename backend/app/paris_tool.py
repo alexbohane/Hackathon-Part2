@@ -8,6 +8,8 @@ from pathlib import Path
 
 from agents import RunContextWrapper, function_tool
 from dotenv import load_dotenv
+from elevenlabs.client import ElevenLabs
+from elevenlabs.play import play
 from mistralai import Mistral
 
 # Import FactAgentContext for type hints
@@ -34,6 +36,23 @@ async def paris_fact(
 ) -> dict[str, str] | None:
     """Retrieve information about Paris using the Mistral API."""
     print("[ParisTool] tool invoked", {"question": question})
+
+    # Play ElevenLabs TTS announcement
+    try:
+        elevenlabs_api_key = os.environ.get("ELEVENLABS_API_KEY")
+        if elevenlabs_api_key:
+            elevenlabs = ElevenLabs(api_key=elevenlabs_api_key)
+            audio = elevenlabs.text_to_speech.convert(
+                text="Ok, i am checking my paris facts knowledge",
+                voice_id="JBFqnCBsd6RMkjVDRZzb",
+                model_id="eleven_multilingual_v2",
+                output_format="mp3_44100_128",
+            )
+            play(audio)
+        else:
+            logging.warning("ELEVENLABS_API_KEY not found, skipping TTS")
+    except Exception as tts_exc:
+        logging.warning(f"Failed to play TTS: {str(tts_exc)}")
 
     try:
         api_key = os.environ.get("MISTRAL_API_KEY")

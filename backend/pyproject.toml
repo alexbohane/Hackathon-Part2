@@ -12,6 +12,7 @@ dependencies = [
     "openai>=1.40",
     "openai-chatkit>=1.1.2,<2",
     "python-dotenv>=1.0.0",
+    "elevenlabs>=1.0.0",
 ]
 
 [project.optional-dependencies]
