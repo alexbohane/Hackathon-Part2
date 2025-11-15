@@ -15,7 +15,7 @@ This document explains how to customize the ChatKit starter template that lives 
 - Node.js 20+
 - Python 3.11+
 - [uv](https://docs.astral.sh/uv/getting-started/installation/) (recommended) or `pip`
-- OpenAI API key exported as `OPENAI_API_KEY`
+- OpenAI API key configured in `backend/.env` file as `OPENAI_API_KEY`
 - ChatKit domain key exported as `VITE_CHATKIT_API_DOMAIN_KEY` (any non-empty placeholder during local dev; use the real key from the allowlist in production)
 
 ---
@@ -25,8 +25,9 @@ This document explains how to customize the ChatKit starter template that lives 
 1. **Backend**
    ```bash
    cd backend
+   # Create .env file with your OpenAI API key
+   echo "OPENAI_API_KEY=sk-proj-..." > .env
    uv sync
-   export OPENAI_API_KEY="sk-proj-..."
    uv run uvicorn app.main:app --reload --port 8000
    ```
    The API listens on `http://127.0.0.1:8000`.

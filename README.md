@@ -25,24 +25,30 @@ From the repository root you can bootstrap the backend in one step:
 npm run backend
 ```
 
-This command runs `uv sync` for `backend/` and launches Uvicorn on `http://127.0.0.1:8000`. Make sure [uv](https://docs.astral.sh/uv/getting-started/installation/) is installed and `OPENAI_API_KEY` is exported beforehand.
+This command runs `uv sync` for `backend/` and launches Uvicorn on `http://127.0.0.1:8000`. Make sure [uv](https://docs.astral.sh/uv/getting-started/installation/) is installed and your OpenAI API key is configured in a `.env` file beforehand.
 
 If you prefer running the backend from inside `backend/`, follow the manual steps:
 
-```bash
-cd backend
-uv sync
-export OPENAI_API_KEY=sk-proj-...
-uv run uvicorn app.main:app --reload --port 8000
-```
+1. Create a `.env` file in the `backend/` directory:
+   ```bash
+   cd backend
+   echo "OPENAI_API_KEY=sk-proj-..." > .env
+   ```
+
+2. Install dependencies and run the server:
+   ```bash
+   uv sync
+   uv run uvicorn app.main:app --reload --port 8000
+   ```
 
 If you don't have uv, you can do the same with:
 
 ```bash
 cd backend
+# Create .env file with your API key
+echo "OPENAI_API_KEY=sk-proj-..." > .env
 python -m venv .venv && source .venv/bin/activate
 pip install -e .
-export OPENAI_API_KEY=sk-proj-...
 uvicorn app.main:app --reload
 ```
 
@@ -68,7 +74,7 @@ npm run dev
 
 Optional configuration hooks live in [`frontend/src/lib/config.ts`](frontend/src/lib/config.ts) if you want to tweak API URLs or UI defaults.
 
-To launch both the backend and frontend together from the repository root, you can use `npm start`. This command also requires `uv` plus the necessary environment variables (for example `OPENAI_API_KEY`) to be set beforehand.
+To launch both the backend and frontend together from the repository root, you can use `npm start`. This command also requires `uv` plus a `.env` file in the `backend/` directory with your `OPENAI_API_KEY` configured.
 
 The Vite dev server runs at `http://127.0.0.1:5170`, and this works fine for local development. However, for production deployments:
 
@@ -94,6 +100,6 @@ Under the [`examples`](examples) directory, you'll find three more sample apps t
 2. [**Knowledge Assistant**](examples/knowledge-assistant): knowledge-base agent backed by OpenAI's File Search tool.
 3. [**Marketing Assets**](examples/marketing-assets): marketing creative workflow.
 
-Each example under [`examples/`](examples) includes the helper scripts (`npm start`, `npm run frontend`, `npm run backend`) pre-configured with its dedicated ports, so you can `cd` into an example and run `npm start` to boot its backend and frontend together. Please note that when you run `npm start`, `uv` must already be installed and all required environment variables should be exported.
+Each example under [`examples/`](examples) includes the helper scripts (`npm start`, `npm run frontend`, `npm run backend`) pre-configured with its dedicated ports, so you can `cd` into an example and run `npm start` to boot its backend and frontend together. Please note that when you run `npm start`, `uv` must already be installed and a `.env` file with your `OPENAI_API_KEY` should be configured in the backend directory.
 
 Test

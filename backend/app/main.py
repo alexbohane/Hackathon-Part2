@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
+from dotenv import load_dotenv
 from chatkit.server import StreamingResult
 from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.responses import Response, StreamingResponse
@@ -14,6 +16,10 @@ from .chat import (
     create_chatkit_server,
 )
 from .facts import fact_store
+
+# Load environment variables from .env file
+env_path = Path(__file__).parent.parent / ".env"
+load_dotenv(env_path)
 
 app = FastAPI(title="ChatKit API")
 

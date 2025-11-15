@@ -65,6 +65,10 @@ class FactAgentContext(AgentContext):
     request_context: dict[str, Any]
 
 
+# Import paris_fact after FactAgentContext is defined to avoid circular import
+from .paris_tool import paris_fact
+
+
 @function_tool(description_override="Record a fact shared by the user so it is saved immediately.")
 async def save_fact(
     ctx: RunContextWrapper[FactAgentContext],
@@ -185,7 +189,7 @@ class FactAssistantServer(ChatKitServer[dict[str, Any]]):
     def __init__(self) -> None:
         self.store: MemoryStore = MemoryStore()
         super().__init__(self.store)
-        tools = [save_fact, switch_theme, get_weather]
+        tools = [save_fact, switch_theme, get_weather, paris_fact]
         self.assistant = Agent[FactAgentContext](
             model=MODEL,
             name="ChatKit Guide",
