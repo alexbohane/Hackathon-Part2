@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import os
+import random
 from datetime import datetime
 from typing import Annotated, Any, AsyncIterator, Final, Literal
 from uuid import uuid4
@@ -19,13 +20,14 @@ from chatkit.agents import (
 )
 from chatkit.server import ChatKitServer
 from chatkit.types import (
+    AssistantMessageItem,
     Attachment,
     HiddenContextItem,
     ThreadMetadata,
     ThreadStreamEvent,
     UserMessageItem,
 )
-from openai.types.responses import ResponseInputContentParam
+from openai.types.responses import ResponseInputContentParam, ResponseInputTextParam
 from pydantic import ConfigDict, Field
 
 from .constants import INSTRUCTIONS, MODEL
@@ -33,6 +35,12 @@ from .facts import fact_store
 from .memory_store import MemoryStore
 from .sample_widget import render_weather_widget, weather_widget_copy_text
 from .thread_item_converter import BasicThreadItemConverter
+from .venue_compare import (
+    VenueLookupError,
+    render_venue_comparison_widget,
+    retrieve_venues,
+    venue_comparison_copy_text,
+)
 from .weather import (
     WeatherLookupError,
     retrieve_weather,
@@ -73,7 +81,7 @@ class FactAgentContext(AgentContext):
 from .paris_tool import paris_fact
 
 
-@function_tool(description_override="Record a fact shared by the user so it is saved immediately.")
+@function_tool(description_override="Record an event detail shared by the user so it is saved immediately.")
 async def save_fact(
     ctx: RunContextWrapper[FactAgentContext],
     fact: str,
@@ -82,9 +90,22 @@ async def save_fact(
     try:
         elevenlabs_api_key = os.environ.get("ELEVENLABS_API_KEY")
         if elevenlabs_api_key:
+            tts_messages = [
+                "I am going to add this event detail to my database",
+                "Got it, I'll save that event detail right away",
+                "Perfect, I'm recording this event detail now",
+                "I'm adding this information to your event details",
+                "Let me save that event detail for you",
+                "I'll make sure this event detail is saved",
+                "Adding this event detail to the database now",
+                "I'm documenting this event detail right away",
+                "Got it, saving this event detail immediately",
+                "I'll add this event detail to your event planning notes",
+            ]
+            selected_message = random.choice(tts_messages)
             elevenlabs = ElevenLabs(api_key=elevenlabs_api_key)
             audio = elevenlabs.text_to_speech.convert(
-                text="I am going to add this fact to my database",
+                text=selected_message,
                 voice_id="JBFqnCBsd6RMkjVDRZzb",
                 model_id="eleven_multilingual_v2",
                 output_format="mp3_44100_128",
@@ -117,10 +138,10 @@ async def save_fact(
             name="record_fact",
             arguments={"fact_id": confirmed.id, "fact_text": confirmed.text},
         )
-        print(f"FACT SAVED: {confirmed}")
+        print(f"EVENT DETAIL SAVED: {confirmed}")
         return {"fact_id": confirmed.id, "status": "saved"}
     except Exception:
-        logging.exception("Failed to save fact")
+        logging.exception("Failed to save event detail")
         return None
 
 
@@ -204,16 +225,66 @@ async def get_weather(
     }
 
 
+@function_tool(
+    description_override="Compare venue options for an event. When a user asks about venue options or wants to see venue comparisons, this tool retrieves two example venues and displays them side-by-side with images, locations, and cost information."
+)
+async def compare_venues(
+    ctx: RunContextWrapper[FactAgentContext],
+    location: str | None = None,
+) -> dict[str, str | None]:
+    print("[VenueTool] tool invoked", {"location": location})
+    try:
+        data = await retrieve_venues(location)
+    except VenueLookupError as exc:
+        print("[VenueTool] lookup failed", {"error": str(exc)})
+        raise ValueError(str(exc)) from exc
+
+    print(
+        "[VenueTool] lookup succeeded",
+        {
+            "venue1": data.venues[0].name,
+            "venue2": data.venues[1].name,
+        },
+    )
+    try:
+        widget = render_venue_comparison_widget(data)
+        copy_text = venue_comparison_copy_text(data)
+        payload: Any
+        try:
+            payload = widget.model_dump()
+        except AttributeError:
+            payload = widget
+        print("[VenueTool] widget payload", payload)
+    except Exception as exc:  # noqa: BLE001
+        print("[VenueTool] widget build failed", {"error": str(exc)})
+        raise ValueError("Venue comparison data is currently unavailable.") from exc
+
+    print("[VenueTool] streaming widget")
+    try:
+        await ctx.context.stream_widget(widget, copy_text=copy_text)
+    except Exception as exc:  # noqa: BLE001
+        print("[VenueTool] widget stream failed", {"error": str(exc)})
+        raise ValueError("Venue comparison data is currently unavailable.") from exc
+
+    print("[VenueTool] widget streamed")
+
+    return {
+        "venue1": data.venues[0].name,
+        "venue2": data.venues[1].name,
+        "location": location,
+    }
+
+
 class FactAssistantServer(ChatKitServer[dict[str, Any]]):
-    """ChatKit server wired up with the fact-recording tool."""
+    """ChatKit server wired up with the event planning assistant."""
 
     def __init__(self) -> None:
         self.store: MemoryStore = MemoryStore()
         super().__init__(self.store)
-        tools = [save_fact, switch_theme, get_weather, paris_fact]
+        tools = [save_fact, switch_theme, get_weather, paris_fact, compare_venues]
         self.assistant = Agent[FactAgentContext](
             model=MODEL,
-            name="ChatKit Guide",
+            name="Event Planner",
             instructions=INSTRUCTIONS,
             tools=tools,  # type: ignore[arg-type]
             # Stop generating response after client tool calls are made
@@ -245,6 +316,64 @@ class FactAssistantServer(ChatKitServer[dict[str, Any]]):
         )
         # Runner expects last message last
         items = list(reversed(items_page.data))
+
+        # If thread is empty (first message), send welcome message first
+        if len(items) == 0:
+            welcome_message = "Hello, I am here to assist you in planning an event, feel free to use the chat and we can start building the event of your dreams"
+            welcome_item = AssistantMessageItem(
+                id=_gen_id("msg"),
+                thread_id=thread.id,
+                created_at=datetime.now(),
+                content=[
+                    ResponseInputTextParam(
+                        type="input_text",
+                        text=welcome_message,
+                    )
+                ],
+                role="assistant",
+            )
+
+            # Save the welcome message to the thread
+            await self.store.add_thread_item(thread.id, welcome_item, context)
+
+            # Yield the welcome message as a stream event
+            yield ThreadStreamEvent(
+                type="thread.message.delta",
+                thread_id=thread.id,
+                id=welcome_item.id,
+                delta={
+                    "type": "message.delta",
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "input_text_delta",
+                            "text": welcome_message,
+                        }
+                    ],
+                },
+            )
+
+            yield ThreadStreamEvent(
+                type="thread.message.completed",
+                thread_id=thread.id,
+                id=welcome_item.id,
+                message=welcome_item,
+            )
+
+            # If no user message, we're done (just showing welcome)
+            if item is None:
+                return
+
+            # If there's a user message, reload items to include the welcome message
+            items_page = await self.store.load_thread_items(
+                thread.id,
+                after=None,
+                limit=20,
+                order="desc",
+                context=context,
+            )
+            items = list(reversed(items_page.data))
+
         input_items = await self.thread_item_converter.to_agent_input(items)
 
         result = Runner.run_streamed(

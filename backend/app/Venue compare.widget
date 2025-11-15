@@ -1,0 +1,212 @@
+{
+  "version": "1.0",
+  "name": "Venue compare",
+  "template": "{\"type\":\"Card\",\"size\":\"md\",\"children\":[{\"type\":\"Col\",\"gap\":3,\"children\":[{\"type\":\"Title\",\"value\":\"Compare venues\",\"size\":\"sm\"},{\"type\":\"Row\",\"gap\":3,\"align\":\"stretch\",\"children\":[{%- set _c -%}{%-for v in venues -%},{\"type\":\"Col\",\"key\":{{ (v.id) | tojson }},\"flex\":1,\"gap\":2,\"children\":[{\"type\":\"Image\",\"src\":{{ (v.image) | tojson }},\"alt\":{{ (v.alt) | tojson }},\"aspectRatio\":{{ ((16 / 9)) | tojson }}},{\"type\":\"Text\",\"value\":{{ (v.name) | tojson }},\"size\":\"sm\",\"weight\":\"semibold\",\"maxLines\":1},{\"type\":\"Row\",\"gap\":2,\"align\":\"center\",\"children\":[{\"type\":\"Icon\",\"name\":\"map-pin\",\"size\":\"sm\",\"color\":\"secondary\"},{\"type\":\"Caption\",\"value\":{{ (v.location) | tojson }}},{\"type\":\"Spacer\"},{\"type\":\"Badge\",\"label\":{{ (v.cost) | tojson }},\"color\":\"info\"}]}]}{%-endfor-%}{%- endset -%}{{- (_c[1:] if _c and _c[0] == ',' else _c) -}}]}]}]}",
+  "jsonSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "venues": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "image": {
+              "type": "string"
+            },
+            "alt": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "cost": {
+              "type": "string",
+              "enum": [
+                "$",
+                "$$",
+                "$$$"
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "image",
+            "alt",
+            "location",
+            "cost"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "required": [
+      "venues"
+    ],
+    "additionalProperties": false
+  },
+  "outputJsonPreview": {
+    "type": "Card",
+    "size": "md",
+    "children": [
+      {
+        "type": "Col",
+        "gap": 3,
+        "children": [
+          {
+            "type": "Title",
+            "value": "Compare venues",
+            "size": "sm"
+          },
+          {
+            "type": "Row",
+            "gap": 3,
+            "align": "stretch",
+            "children": [
+              {
+                "type": "Col",
+                "key": "v1",
+                "flex": 1,
+                "gap": 2,
+                "children": [
+                  {
+                    "type": "Image",
+                    "src": "https://upload.wikimedia.org/wikipedia/commons/f/f3/London_House_Rooftop%2C_Chicago.jpg",
+                    "alt": "Chicago skyline view from a rooftop terrace",
+                    "aspectRatio": 1.7777777777777777
+                  },
+                  {
+                    "type": "Text",
+                    "value": "Rooftop Terrace (Chicago)",
+                    "size": "sm",
+                    "weight": "semibold",
+                    "maxLines": 1
+                  },
+                  {
+                    "type": "Row",
+                    "gap": 2,
+                    "align": "center",
+                    "children": [
+                      {
+                        "type": "Icon",
+                        "name": "map-pin",
+                        "size": "sm",
+                        "color": "secondary"
+                      },
+                      {
+                        "type": "Caption",
+                        "value": "Chicago, IL"
+                      },
+                      {
+                        "type": "Spacer"
+                      },
+                      {
+                        "type": "Badge",
+                        "label": "$$$",
+                        "color": "info"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Col",
+                "key": "v2",
+                "flex": 1,
+                "gap": 2,
+                "children": [
+                  {
+                    "type": "Image",
+                    "src": "https://upload.wikimedia.org/wikipedia/commons/6/69/Schuyler_Oak_Ballroom_interior_1.JPG",
+                    "alt": "Interior of a historic ballroom with timber ceiling",
+                    "aspectRatio": 1.7777777777777777
+                  },
+                  {
+                    "type": "Text",
+                    "value": "Historic Ballroom (Nebraska)",
+                    "size": "sm",
+                    "weight": "semibold",
+                    "maxLines": 1
+                  },
+                  {
+                    "type": "Row",
+                    "gap": 2,
+                    "align": "center",
+                    "children": [
+                      {
+                        "type": "Icon",
+                        "name": "map-pin",
+                        "size": "sm",
+                        "color": "secondary"
+                      },
+                      {
+                        "type": "Caption",
+                        "value": "Schuyler, NE"
+                      },
+                      {
+                        "type": "Spacer"
+                      },
+                      {
+                        "type": "Badge",
+                        "label": "$$",
+                        "color": "info"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "encodedWidget": "eyJpZCI6ImQ2YTNmYTVkLTZlN2ItNGQ0Yy05Mzc0LTMzZGQ0YjFiM2Q2NCIsIm5hbWUiOiJWZW51ZSBjb21wYXJlIiwidmlldyI6IjxDYXJkIHNpemU9XCJtZFwiPlxuICA8Q29sIGdhcD17M30-XG4gICAgPFRpdGxlIHZhbHVlPVwiQ29tcGFyZSB2ZW51ZXNcIiBzaXplPVwic21cIiAvPlxuICAgIDxSb3cgZ2FwPXszfSBhbGlnbj1cInN0cmV0Y2hcIj5cbiAgICAgIHt2ZW51ZXMubWFwKCh2KSA9PiAoXG4gICAgICAgIDxDb2wga2V5PXt2LmlkfSBmbGV4PXsxfSBnYXA9ezJ9PlxuICAgICAgICAgIDxJbWFnZSBzcmM9e3YuaW1hZ2V9IGFsdD17di5hbHR9IGFzcGVjdFJhdGlvPXsxNiAvIDl9IC8-XG4gICAgICAgICAgPFRleHQgdmFsdWU9e3YubmFtZX0gc2l6ZT1cInNtXCIgd2VpZ2h0PVwic2VtaWJvbGRcIiBtYXhMaW5lcz17MX0gLz5cbiAgICAgICAgICA8Um93IGdhcD17Mn0gYWxpZ249XCJjZW50ZXJcIj5cbiAgICAgICAgICAgIDxJY29uIG5hbWU9XCJtYXAtcGluXCIgc2l6ZT1cInNtXCIgY29sb3I9XCJzZWNvbmRhcnlcIiAvPlxuICAgICAgICAgICAgPENhcHRpb24gdmFsdWU9e3YubG9jYXRpb259IC8-XG4gICAgICAgICAgICA8U3BhY2VyIC8-XG4gICAgICAgICAgICA8QmFkZ2UgbGFiZWw9e3YuY29zdH0gY29sb3I9XCJpbmZvXCIgLz5cbiAgICAgICAgICA8L1Jvdz5cbiAgICAgICAgPC9Db2w-XG4gICAgICApKX1cbiAgICA8L1Jvdz5cbiAgPC9Db2w-XG48L0NhcmQ-IiwiZGVmYXVsdFN0YXRlIjp7InZlbnVlcyI6W3siaWQiOiJ2MSIsIm5hbWUiOiJSb29mdG9wIFRlcnJhY2UgKENoaWNhZ28pIiwiaW1hZ2UiOiJodHRwczovL3VwbG9hZC53aWtpbWVkaWEub3JnL3dpa2lwZWRpYS9jb21tb25zL2YvZjMvTG9uZG9uX0hvdXNlX1Jvb2Z0b3AlMkNfQ2hpY2Fnby5qcGciLCJhbHQiOiJDaGljYWdvIHNreWxpbmUgdmlldyBmcm9tIGEgcm9vZnRvcCB0ZXJyYWNlIiwibG9jYXRpb24iOiJDaGljYWdvLCBJTCIsImNvc3QiOiIkJCQifSx7ImlkIjoidjIiLCJuYW1lIjoiSGlzdG9yaWMgQmFsbHJvb20gKE5lYnJhc2thKSIsImltYWdlIjoiaHR0cHM6Ly91cGxvYWQud2lraW1lZGlhLm9yZy93aWtpcGVkaWEvY29tbW9ucy82LzY5L1NjaHV5bGVyX09ha19CYWxscm9vbV9pbnRlcmlvcl8xLkpQRyIsImFsdCI6IkludGVyaW9yIG9mIGEgaGlzdG9yaWMgYmFsbHJvb20gd2l0aCB0aW1iZXIgY2VpbGluZyIsImxvY2F0aW9uIjoiU2NodXlsZXIsIE5FIiwiY29zdCI6IiQkIn1dfSwic3RhdGVzIjpbXSwic2NoZW1hIjoiaW1wb3J0IHsgeiB9IGZyb20gXCJ6b2RcIlxuXG5jb25zdCBWZW51ZSA9IHouc3RyaWN0T2JqZWN0KHtcbiAgaWQ6IHouc3RyaW5nKCksXG4gIG5hbWU6IHouc3RyaW5nKCksXG4gIGltYWdlOiB6LnN0cmluZygpLFxuICBhbHQ6IHouc3RyaW5nKCksXG4gIGxvY2F0aW9uOiB6LnN0cmluZygpLFxuICBjb3N0OiB6LmVudW0oW1wiJFwiLCBcIiQkXCIsIFwiJCQkXCJdKSxcbn0pXG5cbmNvbnN0IFdpZGdldFN0YXRlID0gei5zdHJpY3RPYmplY3Qoe1xuICB2ZW51ZXM6IHouYXJyYXkoVmVudWUpLFxufSlcblxuZXhwb3J0IGRlZmF1bHQgV2lkZ2V0U3RhdGUiLCJzY2hlbWFWYWxpZGl0eSI6InZhbGlkIiwidmlld1ZhbGlkaXR5IjoidmFsaWQiLCJkZWZhdWx0U3RhdGVWYWxpZGl0eSI6InZhbGlkIn0"
+}
+
+Here is some code:
+<Card size="md">
+  <Col gap={3}>
+    <Title value="Compare venues" size="sm" />
+    <Row gap={3} align="stretch">
+      {venues.map((v) => (
+        <Col key={v.id} flex={1} gap={2}>
+          <Image src={v.image} alt={v.alt} aspectRatio={16 / 9} />
+          <Text value={v.name} size="sm" weight="semibold" maxLines={1} />
+          <Row gap={2} align="center">
+            <Icon name="map-pin" size="sm" color="secondary" />
+            <Caption value={v.location} />
+            <Spacer />
+            <Badge label={v.cost} color="info" />
+          </Row>
+        </Col>
+      ))}
+    </Row>
+  </Col>
+</Card>
+
+Schema:
+import { z } from "zod"
+
+const Venue = z.strictObject({
+  id: z.string(),
+  name: z.string(),
+  image: z.string(),
+  alt: z.string(),
+  location: z.string(),
+  cost: z.enum(["$", "$$", "$$$"]),
+})
+
+const WidgetState = z.strictObject({
+  venues: z.array(Venue),
+})
+
+export default WidgetState
+

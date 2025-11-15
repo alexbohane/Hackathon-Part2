@@ -16,17 +16,17 @@ export const FACTS_API_URL = import.meta.env.VITE_FACTS_API_URL ?? "/facts";
 
 export const THEME_STORAGE_KEY = "chatkit-boilerplate-theme";
 
-export const GREETING = "Welcome to the ChatKit Demo";
+export const GREETING = "Welcome to Event Planner";
 
 export const STARTER_PROMPTS: StartScreenPrompt[] = [
   {
-    label: "What can you do?",
-    prompt: "What can you do?",
+    label: "I want to plan a hackathon",
+    prompt: "I want to plan a hackathon",
     icon: "circle-question",
   },
   {
-    label: "My name is Kaz",
-    prompt: "My name is Kaz",
+    label: "What information do you need?",
+    prompt: "What information do you need to help me plan my event?",
     icon: "book-open",
   },
   {
@@ -41,4 +41,4 @@ export const STARTER_PROMPTS: StartScreenPrompt[] = [
   },
 ];
 
-export const PLACEHOLDER_INPUT = "Share a fact about yourself";
+export const PLACEHOLDER_INPUT = "Tell me about your event...";

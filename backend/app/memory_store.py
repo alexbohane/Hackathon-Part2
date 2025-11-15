@@ -4,8 +4,11 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Dict, List
 
+from uuid import uuid4
+
 from chatkit.store import NotFoundError, Store
-from chatkit.types import Attachment, Page, Thread, ThreadItem, ThreadMetadata
+from chatkit.types import Attachment, AssistantMessageItem, Page, Thread, ThreadItem, ThreadMetadata
+from openai.types.responses import ResponseInputTextParam
 
 
 @dataclass

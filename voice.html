@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talk to Venue Booking Agent</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        h1 {
+            color: #a855f7;
+        }
+        .info {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .info h2 {
+            color: #5b5bff;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎙️ Talk to the Venue Booking Agent</h1>
+
+    <div class="info">
+        <h2>Instructions:</h2>
+        <p>The AI agent will call you about booking Station F for December 15, 2025.</p>
+        <p><strong>You are playing the role of the venue owner.</strong></p>
+        <p>Click the widget below to start talking with the agent!</p>
+    </div>
+
+    <!-- ElevenLabs Conversational AI Widget -->
+    <elevenlabs-convai agent-id="agent_7401ka44h8vqex1azm2xzct0q86y"></elevenlabs-convai>
+    <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
+
+    <div class="info" style="margin-top: 40px;">
+        <h2>What happens:</h2>
+        <ul>
+            <li>✅ The agent will ask to book the venue</li>
+            <li>✅ You can respond by speaking naturally</li>
+            <li>✅ Confirm the booking to see success!</li>
+        </ul>
+    </div>
+</body>
+</html>
